@@ -1,10 +1,16 @@
-import Svg from "./Svg";
-export const Bin = ({title, whatToMap, setShowEntry, entryEditing, restoreEntry, shredEntry}) => {
+import Svg from './Svg';
+export const Bin = ({
+	bin,
+	setShowEntry,
+	entryEditing,
+	restoreEntry,
+	shredEntry,
+}) => {
 	return (
 		<div className={'flex justify-center'}>
 			<div className={'w-full overflow-hidden'}>
-				<div className={'text-4xl mb-3'}>{title}</div>
-				{whatToMap.map((Entry) => (
+				<div className={'text-4xl mb-3'}>Bin</div>
+				{bin.map((Entry) => (
 					<div
 						key={Entry.id}
 						className="Entry hover:bg-yellow-100 transition-all mb-3"
