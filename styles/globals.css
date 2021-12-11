@@ -1,0 +1,23 @@
+/*@import url('https://fonts.googleapis.com/css2?family=Estonia&family=Shippori+Antique+B1&display=swap');*/
+
+body {
+    font-family: 'Shippori Antique B1', sans-serif;
+}
+
+.title {
+    font-family: 'Estonia', cursive;
+}
+
+.blinkingUnderline {
+    @apply border-b-4 border-gray-800 transition-all;
+    animation: blink-animation 1.5s  infinite;
+    -webkit-animation: blink-animation 1.5s infinite;
+}
+@keyframes blink-animation {
+    to {
+        @apply border-transparent}
+}
+@-webkit-keyframes blink-animation {
+    to {
+        @apply border-transparent}
+}
