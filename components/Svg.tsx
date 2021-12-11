@@ -1,6 +1,3 @@
-import React from 'react';
-import { entryType } from './Diary';
-
 type svgType = {
 	onClickArg?: any;
 	runOnClick?: Function;
@@ -21,7 +18,7 @@ export const Svg = ({
 	return (
 		<svg
 			onClick={() => {
-				runOnClick(onClickArg);
+				if (runOnClick) runOnClick(onClickArg);
 				if (secondRunOnClick) secondRunOnClick(secondOnClickArg);
 			}}
 			// className="w-7 h-7 hover:w-11 hover:h-11 inline-block transition-all"

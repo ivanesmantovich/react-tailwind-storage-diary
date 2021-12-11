@@ -1,146 +1,15 @@
-import React, {
-	useState,
-	useEffect,
-	createContext,
-	useContext,
-	useReducer,
-} from 'react';
+import React, { useState, useEffect, createContext, useReducer } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Header from './Header';
 import OneEntry from './OneEntry';
 import Svg from './Svg';
 import * as start from '../ts/start';
-
-export type entryType = {
-	id: number;
-	text: string;
-	time: string;
-	changed: boolean;
-	timeOfChange: null | string;
-};
+import type { entryType } from '../types/entryType';
 
 export const OneEntryContext = createContext<any | undefined>(undefined);
 
 export const Diary = () => {
-	enum DiaryActionType {
-		NEW_CHANGE_TEXT = 'NEW_CHANGE_TEXT',
-		SUBMIT_NEW = 'SUBMIT_NEW',
-		EDITING_CHANGE_TEXT = 'EDITING_CHANGE_TEXT',
-		SUBMIT_EDIT = 'SUBMIT_EDIT',
-		ADD_ENTRY = 'ADD_ENTRY',
-		DELETE_ENTRY = 'DELETE_ENTRY',
-		SHRED_ENTRY = 'SHRED_ENTRY',
-		RESTORE_ENTRY = 'RESTORE_ENTRY',
-	}
-
-	interface DiaryAction {
-		type: DiaryActionType;
-		payload: string | number | entryType | entryType[];
-	}
-
-	interface StateType {
-		entries: entryType[];
-		entry: string;
-		entryEditing: null | number;
-		editingText: string;
-		bin: entryType[];
-		showAllEntries: boolean;
-		showBin: boolean;
-		showEntry: boolean;
-	}
-
-	const initialState = {
-		entries: start.diary,
-		entry: '',
-		entryEditing: null,
-		editingText: '',
-		bin: start.bin,
-		showAllEntries: false,
-		showBin: false,
-		showEntry: false,
-	};
-
-	const diaryReducer = (state: StateType, action: DiaryAction) => {
-		const { type, payload } = action;
-		switch (type) {
-
-
-			case DiaryActionType.NEW_CHANGE_TEXT:
-				return {
-					...state,
-					entry: payload,
-				};
-
-				// function handleSubmit(e) {
-				// 	e.preventDefault();
-				// 	if (entry == '') return;
-			
-				// 	const newEntry: entryType = {
-				// 		id: uuidv4(),
-				// 		text: entry,
-				// 		time: new Date(Date.now()).toLocaleString().slice(0, -3),
-				// 		changed: false,
-				// 		timeOfChange: null,
-				// 	};
-				// 	setEntries([...entries].concat(newEntry));
-				// 	setEntry('');
-				// }
-
-			// case DiaryActionType.SUBMIT_NEW:
-
-			case DiaryActionType.EDITING_CHANGE_TEXT:
-				return {
-					...state,
-					editingText: payload,
-				};
-
-			case DiaryActionType.SUBMIT_EDIT:
-				const updatedEntries = [...entries].map((entry) => {
-					if (entry.id === payload) {
-						entry.text = editingText;
-						entry.changed = true;
-						entry.timeOfChange = new Date(Date.now())
-							.toLocaleString()
-							.slice(0, -3);
-					}
-					return entry;
-				});
-				return {
-					...state,
-					entries: updatedEntries,
-					entryEditing: null,
-				};
-
-			case DiaryActionType.ADD_ENTRY:
-				return {
-					...state,
-					entries: payload,
-				};
-
-			case DiaryActionType.DELETE_ENTRY:
-				return {
-					...state,
-					bin: [...state.bin].concat([...state.entries].filter((entry) => entry.id === payload)),
-					entries: [...state.entries].filter((entry) => entry.id !== payload),
-				};			
-			case DiaryActionType.SHRED_ENTRY:
-				return {
-					...state,
-					bin: [...state.bin].filter((entry) => entry.id !== payload),
-				};
-
-			case DiaryActionType.RESTORE_ENTRY:
-				return {
-					...state,
-					entries: [...state.entries].concat([...state.bin].filter((entry) => entry.id === payload)),
-					bin: [...bin].filter((entry) => entry.id !== payload)
-				};
-		}
-	};
-
-	const [state, dispatch] = useReducer(diaryReducer, initialState);
-
-	const [entries, setEntries] = useState<entryType[]>(start.diary);
+	const [entries, setEntries] = useState<entryType[]>(start.diary); // Отрефакторил
 	const [entry, setEntry] = useState<string>('');
 	const [entryEditing, setEntryEditing] = useState(null);
 	const [editingText, setEditingText] = useState<string>('');
@@ -153,13 +22,9 @@ export const Diary = () => {
 		const jsonEntries = localStorage.getItem('Entries');
 		const jsonBin = localStorage.getItem('Bin');
 		const loadedEntries = JSON.parse(jsonEntries);
-		if (loadedEntries) {
-			setEntries(loadedEntries);
-		}
 		const loadedBin = JSON.parse(jsonBin);
-		if (loadedBin) {
-			setBin(loadedBin);
-		}
+		if (loadedEntries) setEntries(loadedEntries);
+		if (loadedBin) setBin(loadedBin);
 	}, []);
 
 	useEffect(() => {
@@ -169,8 +34,7 @@ export const Diary = () => {
 		localStorage.setItem('Bin', jsonBin);
 	}, [entries, bin]);
 
-	function handleSubmit(e) {
-		e.preventDefault();
+	function handleSubmit() {
 		if (entry == '') return;
 
 		const newEntry: entryType = {
@@ -370,7 +234,7 @@ export const Diary = () => {
 																<Svg
 																	runOnClick={submitEdits}
 																	onClickArg={Entry.id}
-																	pathD="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+																	pathD="M5 13l4 4L19 7"
 																/>
 															) : (
 																<Svg
@@ -412,7 +276,7 @@ export const Diary = () => {
 									// Home
 									<div>
 										<div className={'lg:grid lg:grid-cols-10 mt-10'}>
-											<form className={'lg:col-span-6'} onSubmit={handleSubmit}>
+											<div className={'lg:col-span-6'}>
 												<textarea
 													id={'newEntry'}
 													placeholder="Remember, be nice!"
@@ -428,12 +292,12 @@ export const Diary = () => {
 														className={
 															'blinkingUnderline text-2xl hover:text-3xl'
 														}
-														type="submit"
+														onClick={handleSubmit}
 													>
 														Write an Entry
 													</button>
 												</div>
-											</form>
+											</div>
 											<div className={'flex justify-center lg:col-span-4'}>
 												<div className={'w-full overflow-hidden'}>
 													<div
