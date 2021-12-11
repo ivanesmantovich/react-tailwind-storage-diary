@@ -1,4 +1,10 @@
-import React, { useState, useEffect, createContext, useContext } from 'react';
+import React, {
+	useState,
+	useEffect,
+	createContext,
+	useContext,
+	useReducer,
+} from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Header from './Header';
 import OneEntry from './OneEntry';
@@ -16,6 +22,124 @@ export type entryType = {
 export const OneEntryContext = createContext<any | undefined>(undefined);
 
 export const Diary = () => {
+	enum DiaryActionType {
+		NEW_CHANGE_TEXT = 'NEW_CHANGE_TEXT',
+		SUBMIT_NEW = 'SUBMIT_NEW',
+		EDITING_CHANGE_TEXT = 'EDITING_CHANGE_TEXT',
+		SUBMIT_EDIT = 'SUBMIT_EDIT',
+		ADD_ENTRY = 'ADD_ENTRY',
+		DELETE_ENTRY = 'DELETE_ENTRY',
+		SHRED_ENTRY = 'SHRED_ENTRY',
+		RESTORE_ENTRY = 'RESTORE_ENTRY',
+	}
+
+	interface DiaryAction {
+		type: DiaryActionType;
+		payload: string | number | entryType | entryType[];
+	}
+
+	interface StateType {
+		entries: entryType[];
+		entry: string;
+		entryEditing: null | number;
+		editingText: string;
+		bin: entryType[];
+		showAllEntries: boolean;
+		showBin: boolean;
+		showEntry: boolean;
+	}
+
+	const initialState = {
+		entries: start.diary,
+		entry: '',
+		entryEditing: null,
+		editingText: '',
+		bin: start.bin,
+		showAllEntries: false,
+		showBin: false,
+		showEntry: false,
+	};
+
+	const diaryReducer = (state: StateType, action: DiaryAction) => {
+		const { type, payload } = action;
+		switch (type) {
+
+
+			case DiaryActionType.NEW_CHANGE_TEXT:
+				return {
+					...state,
+					entry: payload,
+				};
+
+				// function handleSubmit(e) {
+				// 	e.preventDefault();
+				// 	if (entry == '') return;
+			
+				// 	const newEntry: entryType = {
+				// 		id: uuidv4(),
+				// 		text: entry,
+				// 		time: new Date(Date.now()).toLocaleString().slice(0, -3),
+				// 		changed: false,
+				// 		timeOfChange: null,
+				// 	};
+				// 	setEntries([...entries].concat(newEntry));
+				// 	setEntry('');
+				// }
+
+			// case DiaryActionType.SUBMIT_NEW:
+
+			case DiaryActionType.EDITING_CHANGE_TEXT:
+				return {
+					...state,
+					editingText: payload,
+				};
+
+			case DiaryActionType.SUBMIT_EDIT:
+				const updatedEntries = [...entries].map((entry) => {
+					if (entry.id === payload) {
+						entry.text = editingText;
+						entry.changed = true;
+						entry.timeOfChange = new Date(Date.now())
+							.toLocaleString()
+							.slice(0, -3);
+					}
+					return entry;
+				});
+				return {
+					...state,
+					entries: updatedEntries,
+					entryEditing: null,
+				};
+
+			case DiaryActionType.ADD_ENTRY:
+				return {
+					...state,
+					entries: payload,
+				};
+
+			case DiaryActionType.DELETE_ENTRY:
+				return {
+					...state,
+					bin: [...state.bin].concat([...state.entries].filter((entry) => entry.id === payload)),
+					entries: [...state.entries].filter((entry) => entry.id !== payload),
+				};			
+			case DiaryActionType.SHRED_ENTRY:
+				return {
+					...state,
+					bin: [...state.bin].filter((entry) => entry.id !== payload),
+				};
+
+			case DiaryActionType.RESTORE_ENTRY:
+				return {
+					...state,
+					entries: [...state.entries].concat([...state.bin].filter((entry) => entry.id === payload)),
+					bin: [...bin].filter((entry) => entry.id !== payload)
+				};
+		}
+	};
+
+	const [state, dispatch] = useReducer(diaryReducer, initialState);
+
 	const [entries, setEntries] = useState<entryType[]>(start.diary);
 	const [entry, setEntry] = useState<string>('');
 	const [entryEditing, setEntryEditing] = useState(null);
