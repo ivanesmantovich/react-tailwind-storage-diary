@@ -24,8 +24,8 @@ export const Svg = ({
 			// className="w-7 h-7 hover:w-11 hover:h-11 inline-block transition-all"
 			className={
 				home
-					? 'w-7 h-7 block mx-auto'
-					: 'w-7 h-7 m-3 hover:text-yellow-400 inline-block transition-all duration-150'
+					? 'w-7 h-7 block mx-auto hover:cursor-pointer'
+					: 'w-7 h-7 m-3 hover:text-yellow-400 inline-block transition-all duration-150 hover:cursor-pointer'
 			}
 			fill="none"
 			stroke="currentColor"
