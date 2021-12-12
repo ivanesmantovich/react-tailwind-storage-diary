@@ -15,7 +15,7 @@ export const Bin = ({
 						key={Entry.id}
 						className="Entry hover:bg-yellow-100 transition-all mb-3"
 					>
-						<div className="Entry-text">
+						<div className="Entry-text hover:cursor-pointer">
 							<div>
 								<div>
 									{Entry.changed ? (
